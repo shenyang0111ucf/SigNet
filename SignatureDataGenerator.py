@@ -1,9 +1,9 @@
 import numpy as np
 np.random.seed(1337)  # for reproducibility
-from keras.preprocessing import image
+from tensorflow.keras.preprocessing import image
 from scipy import linalg
 import warnings
-from keras import backend as K
+from tensorflow.keras import backend as K
 import getpass as gp
 import random
 random.seed(1337)
@@ -25,13 +25,17 @@ class SignatureDataGenerator(object):
         
         usr = gp.getuser()        
         
-        if(dataset=='GPDS960' or dataset=='GPDS300' or dataset == 'Hindi' or dataset == 'Bengali'):
-            size = 996            
+        if(dataset=='GPDS960' or dataset=='GPDS300'):
+            size = 996
+        elif dataset == 'Bengali':
+            size = 24*23
+        elif dataset == 'Hindi':
+            size = 24*23
         elif(dataset=='CEDAR1'):
             size = 852
                    
 #        self.image_dir = '/home/' + usr + '/Workspace/SignatureVerification/Datasets/' + dataset + '/'
-        self.image_dir = '/home/' + usr + '/Workspace/Datasets/' + dataset + '/'
+        self.image_dir = '/home/' + usr + '/github/SigNet/Datasets/' + dataset + '/'
         data_file = self.image_dir + dataset + '_pairs.txt'
         
         idx_writers = list(range(tot_writers))
@@ -51,7 +55,6 @@ class SignatureDataGenerator(object):
         idx_test_lines = []
         for iw in idx_test_writers:
             idx_test_lines += list(range(iw * size, (iw + 1) * size))
-            
         f = open( data_file, 'r' )
         lines = f.readlines()
         f.close()        
@@ -74,7 +77,7 @@ class SignatureDataGenerator(object):
         self.valid_lines = self.arrange_lines(valid_lines, nsamples, size)
         # for test writers        
         # self.test_lines = self.arrange_lines(test_lines, nsamples, size)
-        self.test_lines = self.arrange_lines(test_lines, nsamples, 552)  
+        self.test_lines = self.arrange_lines(test_lines, nsamples, size)
         
         # Set other parameters
         self.height=img_height
